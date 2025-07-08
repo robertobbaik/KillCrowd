@@ -17,7 +17,7 @@ class KILLCROWD_API AEnemyStickman : public ABaseEnemyCharacter
 public:
 	virtual void Initialize(const FEnemyStats& EnemyStats) override;
 	virtual void Attack() override;
-	virtual void Die() override;
+	virtual void Death() override;
 	virtual void Operation() override;
 
 protected:

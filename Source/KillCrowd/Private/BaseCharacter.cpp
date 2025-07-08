@@ -56,7 +56,9 @@ void ABaseCharacter::Tick(float DeltaTime)
 	if (bIsAttack)
 	{
 		FRotator CurrentRotation = GetMesh()->GetRelativeRotation();
-		FVector Direction = GetActorLocation() - GetClosestEnemy()->GetActorLocation();
+		
+		FVector Direction = GetClosestEnemy() ? GetActorLocation() - GetClosestEnemy()->GetActorLocation() : GetActorLocation();
+		
 		FRotator TargetRotation = FRotator(0.f,Direction.Rotation().Yaw + 90, 0.f);
 		FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 10.f); // 10.f는 회전 속도
 		GetMesh()->SetRelativeRotation(NewRotation);
@@ -113,7 +115,7 @@ ABaseEnemyCharacter* ABaseCharacter::GetClosestEnemy()
 {
 	float MinDistance = MAX_FLT;
 
-	TArray<ABaseEnemyCharacter*> Enemies = GameMode->Enemies;
+	TSet<ABaseEnemyCharacter*> Enemies = GameMode->AliveEnemyPool;
 	ABaseEnemyCharacter* NearestEnemy = nullptr;
 	
 	for (ABaseEnemyCharacter* Enemy : Enemies)

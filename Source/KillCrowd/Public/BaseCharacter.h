@@ -62,7 +62,9 @@ protected:
 
 	virtual void ChangeWeapon(const EWeaponType WeaponType) PURE_VIRTUAL(ABaseCharacter::ChangeWeapon, )
 	virtual void Attack() PURE_VIRTUAL(ABaseCharacter::Attack,)
+	
 public:
+	virtual void SetDamage() PURE_VIRTUAL(ABaseCharacter::Attack,)
 	virtual void Tick(float DeltaTime) override;
 	
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

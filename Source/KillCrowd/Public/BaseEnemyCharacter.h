@@ -51,12 +51,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Material")
 	UMaterialInstanceDynamic* MaterialInstance;
 
+	UFUNCTION(BlueprintCallable, Category="Status")
+	void SetActive(bool bIsActive);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintCallable, Category="Status")
-	void SetActive(bool bIsActive);
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	bool bIsAlive;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimMontage* AttackAnim;
@@ -94,7 +96,7 @@ protected:
 public:
 	virtual void Initialize(const FEnemyStats& EnemyStats) PURE_VIRTUAL(ABaseEnemyCharacter::Initialize, );
 	virtual void Attack() PURE_VIRTUAL(ABaseEnemyCharacter::Attack, );
-	virtual void Die() PURE_VIRTUAL(ABaseEnemyCharacter::Die, );
+	virtual void Death();
 	virtual void Operation() PURE_VIRTUAL(ABaseEnemyCharacter::Operation, );
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 

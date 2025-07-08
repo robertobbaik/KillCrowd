@@ -15,7 +15,8 @@ class KILLCROWD_API AAssassinCharacter : public ABaseCharacter
 	GENERATED_BODY()
 public:
 	AAssassinCharacter();
-	
+
+	virtual void SetDamage() override;
 
 protected:
 	virtual void Attack() override;

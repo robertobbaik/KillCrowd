@@ -11,31 +11,47 @@ AAssassinCharacter::AAssassinCharacter()
 	WeaponMeshComp->SetupAttachment(GetMesh(), TEXT("hand_r"));
 }
 
-void AAssassinCharacter::Attack()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Attack"));
-	
-	float MinDistance = 300.0f;
-	
-	ABaseEnemyCharacter* NearestEnemy = GetClosestEnemy();
+void AAssassinCharacter::SetDamage()
+{	float MinDistance = 300.0f;
 
-	if (FVector::Distance(GetActorLocation(), NearestEnemy->GetActorLocation()) < MinDistance)
+	TSet<ABaseEnemyCharacter*> Enemies = GameMode->AliveEnemyPool;
+	
+	for (ABaseEnemyCharacter* Enemy : Enemies)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Attack"));
-
-		if (MapAttackMontage[CurrentWeaponType])
+		float Distance = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
+		if (Distance < MinDistance)
 		{
-			PlayAnimMontage(MapAttackMontage[CurrentWeaponType]);
-			float Duration = MapAttackMontage[CurrentWeaponType]->GetPlayLength();
-
-			bIsAttack = true;
-			FTimerHandle TimerHandle;
-			GetWorldTimerManager().SetTimer(TimerHandle, [this]()
-			{
-				bIsAttack = false;
-			},Duration, false);
+			UGameplayStatics::ApplyDamage(Enemy, 50.0f, GetController(), this,	UDamageType::StaticClass());	
 		}
 	}
+}
+
+void AAssassinCharacter::Attack()
+{
+	float MinDistance = 150.0f;
+	
+	if (ABaseEnemyCharacter* NearestEnemy = GetClosestEnemy())
+	{
+		if (FVector::Distance(GetActorLocation(), NearestEnemy->GetActorLocation()) < MinDistance)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Attack"));
+
+			if (MapAttackMontage[CurrentWeaponType])
+			{
+				PlayAnimMontage(MapAttackMontage[CurrentWeaponType]);
+				float Duration = MapAttackMontage[CurrentWeaponType]->GetPlayLength();
+
+				bIsAttack = true;
+				FTimerHandle TimerHandle;
+				GetWorldTimerManager().SetTimer(TimerHandle, [this]()
+				{
+					bIsAttack = false;
+				},Duration, false);
+			}
+		}
+	}
+	
+
 }
 
 void AAssassinCharacter::ChangeWeapon(const EWeaponType WeaponType)

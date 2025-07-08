@@ -3,12 +3,22 @@
 
 #include "KillCrowdGameMode.h"
 #include "CharacterController.h"
+#include "EntitySystem/MovieSceneEntitySystemRunner.h"
 #include "Kismet/GameplayStatics.h"
 
 
 AKillCrowdGameMode::AKillCrowdGameMode()
 {
 	PlayerControllerClass = ACharacterController::StaticClass();
+}
+
+void AKillCrowdGameMode::ReturnEnemyPool(ABaseEnemyCharacter* EnemyCharacter)
+{
+	if (EnemyCharacter)
+	{
+		AliveEnemyPool.Remove(EnemyCharacter);
+		Enemies.Push(EnemyCharacter);
+	}
 }
 
 void AKillCrowdGameMode::BeginPlay()
@@ -24,7 +34,7 @@ void AKillCrowdGameMode::BeginPlay()
 	
 	FTimerHandle TimerHandle;
 
-	GetWorldTimerManager().SetTimer(TimerHandle,this, &AKillCrowdGameMode::SpawnEnemyCharacter, 2.f, true);
+	GetWorldTimerManager().SetTimer(TimerHandle,this, &AKillCrowdGameMode::SpawnEnemyCharacter, 10.f, true);
 }
 
 void AKillCrowdGameMode::SpawnEnemyCharacter()
@@ -37,12 +47,31 @@ void AKillCrowdGameMode::SpawnEnemyCharacter()
 	float Y = RandomDistance * FMath::Sin(FMath::DegreesToRadians(RandomAngle));
     
 	FVector SpawnLocation = PlayerLocation + FVector(X, Y, 0.0f);
-	
-	ABaseEnemyCharacter* SpawnedCharacter = GetWorld()->SpawnActor<ABaseEnemyCharacter>(EnemyClass, SpawnLocation, FRotator(0,0,0));
-	//SpawnedCharacter->Operation();
-	if (SpawnedCharacter)
+
+	UE_LOG(LogTemp, Warning, TEXT("Enemie : %d "), Enemies.Num());
+	UE_LOG(LogTemp, Warning, TEXT("Alive : %d "), AliveEnemyPool.Num());
+	if (Enemies.Num() > 0)
 	{
-		Enemies.Add(SpawnedCharacter);
+		if (ABaseEnemyCharacter* SpawnedCharacter = Enemies.Pop())
+		{
+			SpawnedCharacter->SetActorLocation(SpawnLocation);
+			SpawnedCharacter->SetActive(true);
+			AliveEnemyPool.Add(SpawnedCharacter);
+		}
 	}
+	else
+	{
+		if (ABaseEnemyCharacter* SpawnedCharacter = GetWorld()->SpawnActor<ABaseEnemyCharacter>(EnemyClass, SpawnLocation, FRotator(0,0,0)))
+		{
+			SpawnedCharacter->SetActive(true);
+		 	AliveEnemyPool.Add(SpawnedCharacter);
+		}
+	}
+	//ABaseEnemyCharacter* SpawnedCharacter = GetWorld()->SpawnActor<ABaseEnemyCharacter>(EnemyClass, SpawnLocation, FRotator(0,0,0));
+	//
+	// if (SpawnedCharacter)
+	// {
+	// 	Enemies.Add(SpawnedCharacter);
+	// }
 	
 }

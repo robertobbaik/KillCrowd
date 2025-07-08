@@ -19,8 +19,15 @@ class KILLCROWD_API AKillCrowdGameMode : public AGameMode
 
 public:
 	AKillCrowdGameMode();
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Enemy")
 	TArray<ABaseEnemyCharacter*> Enemies;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Enemy")
+	TSet<ABaseEnemyCharacter*> AliveEnemyPool;
+
+	UFUNCTION()
+	void ReturnEnemyPool(ABaseEnemyCharacter* EnemyCharacter);
+	
 protected:
 	virtual void BeginPlay() override;
 

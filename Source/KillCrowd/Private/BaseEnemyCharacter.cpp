@@ -4,6 +4,7 @@
 #include "BaseEnemyCharacter.h"
 
 #include "EnemyAIController.h"
+#include "KillCrowdGameMode.h"
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -41,16 +42,29 @@ void ABaseEnemyCharacter::SetActive(bool bIsActive)
 	SetActorHiddenInGame(!bIsActive);
 	SetActorEnableCollision(bIsActive);
 	SetActorTickEnabled(bIsActive);
+	bIsAlive = bIsActive;
+
+	if (bIsActive)
+	{
+		AIController->Operation();
+	}
+}
+
+void ABaseEnemyCharacter::Death()
+{
+	UE_LOG(LogTemp, Warning, TEXT("BaseEnemy Death"));
+	AKillCrowdGameMode* GameMode = Cast<AKillCrowdGameMode>(GetWorld()->GetAuthGameMode());
+	GameMode->ReturnEnemyPool(this);
 }
 
 float ABaseEnemyCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-	class AController* EventInstigator, AActor* DamageCauser)
+                                      class AController* EventInstigator, AActor* DamageCauser)
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, this);
 	
 	UE_LOG(LogTemp, Warning, TEXT("Set Damage"));
 
-	Die();
+	Death();
 	return ActualDamage;
 }
 

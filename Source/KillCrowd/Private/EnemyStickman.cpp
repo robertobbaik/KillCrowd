@@ -12,6 +12,7 @@ void AEnemyStickman::Initialize(const FEnemyStats& EnemyStats)
 
 void AEnemyStickman::Attack()
 {
+	if (!bIsAlive) return;
 	UE_LOG(LogTemp, Warning, TEXT("StickMan Attack"));
 	if (AttackAnim)
 	{
@@ -29,10 +30,26 @@ void AEnemyStickman::Attack()
 	}
 }
 
-void AEnemyStickman::Die()
+void AEnemyStickman::Death()
 {
+	
+	UE_LOG(LogTemp, Warning, TEXT("StickMan Death"));
+	bIsAlive = false;
 	AIController->Death();
-	PlayAnimMontage(DeathAnim);
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		//AnimInstance->StopAllMontages(0.0f);
+		//PlayAnimMontage(DeathAnim);
+
+		float Duration = DeathAnim->GetPlayLength();
+		
+		FTimerHandle TimerHandle;
+		GetWorldTimerManager().SetTimer(TimerHandle, [this]()
+		{
+			Super::Death();
+			SetActive(false);
+		}, Duration + 0.2f, false);
+	}
 }
 
 void AEnemyStickman::Operation()

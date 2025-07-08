@@ -13,9 +13,7 @@
 
 AEnemyAIController::AEnemyAIController()
 {
-
 	
-
 }
 
 void AEnemyAIController::StartChasing()
@@ -48,6 +46,16 @@ void AEnemyAIController::Death()
 	ClearFocus(EAIFocusPriority::Gameplay);
 }
 
+void AEnemyAIController::Operation()
+{
+	FTimerHandle TimerHandle;
+
+	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
+	{
+		StartChasing();
+	}, 0.2f, false);
+}
+
 void AEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -62,6 +70,8 @@ void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 {
 	Super::OnMoveCompleted(RequestID, Result);
 
+	//if (!bIsChasing) return;
+	
 	if (Result.IsSuccess())
 	{
 		if (EnemyCharacter)
@@ -80,10 +90,5 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 	
 	TargetActor = Cast<AActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ABaseCharacter::StaticClass()));
 
-	FTimerHandle TimerHandle;
-
-	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
-	{
-		StartChasing();
-	}, 0.2f, false);
+	Operation();
 }
