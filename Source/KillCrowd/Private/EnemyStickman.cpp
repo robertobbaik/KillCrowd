@@ -38,15 +38,12 @@ void AEnemyStickman::Death()
 	AIController->Death();
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
-		//AnimInstance->StopAllMontages(0.0f);
-		//PlayAnimMontage(DeathAnim);
-
 		float Duration = DeathAnim->GetPlayLength();
 		
 		FTimerHandle TimerHandle;
 		GetWorldTimerManager().SetTimer(TimerHandle, [this]()
 		{
-			Super::Death();
+			//Super::Death();
 			SetActive(false);
 		}, Duration + 0.2f, false);
 	}

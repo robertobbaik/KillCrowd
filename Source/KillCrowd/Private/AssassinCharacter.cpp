@@ -19,7 +19,7 @@ void AAssassinCharacter::SetDamage()
 	for (ABaseEnemyCharacter* Enemy : Enemies)
 	{
 		float Distance = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
-		if (Distance < MinDistance)
+		if (Distance < MinDistance && Enemy->bIsAlive)
 		{
 			UGameplayStatics::ApplyDamage(Enemy, 50.0f, GetController(), this,	UDamageType::StaticClass());	
 		}

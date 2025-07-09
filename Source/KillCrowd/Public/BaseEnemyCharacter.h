@@ -53,12 +53,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Status")
 	void SetActive(bool bIsActive);
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
+	bool bIsAlive;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
-	bool bIsAlive;
+
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
 	UAnimMontage* AttackAnim;

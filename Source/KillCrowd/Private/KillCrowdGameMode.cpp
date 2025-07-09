@@ -12,14 +12,6 @@ AKillCrowdGameMode::AKillCrowdGameMode()
 	PlayerControllerClass = ACharacterController::StaticClass();
 }
 
-void AKillCrowdGameMode::ReturnEnemyPool(ABaseEnemyCharacter* EnemyCharacter)
-{
-	if (EnemyCharacter)
-	{
-		AliveEnemyPool.Remove(EnemyCharacter);
-		Enemies.Push(EnemyCharacter);
-	}
-}
 
 void AKillCrowdGameMode::BeginPlay()
 {
@@ -33,9 +25,38 @@ void AKillCrowdGameMode::BeginPlay()
 	PlayerCharacter = Cast<ABaseCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ABaseCharacter::StaticClass()));
 	
 	FTimerHandle TimerHandle;
-
-	GetWorldTimerManager().SetTimer(TimerHandle,this, &AKillCrowdGameMode::SpawnEnemyCharacter, 10.f, true);
+	
+	GetWorldTimerManager().SetTimer(TimerHandle,this, &AKillCrowdGameMode::SpawnEnemyCharacter, 2.f, true);
+	RegisterConsoleCommands();
 }
+
+void AKillCrowdGameMode::ReturnEnemyPool(ABaseEnemyCharacter* EnemyCharacter)
+{
+	if (EnemyCharacter)
+	{
+		AliveEnemyPool.Remove(EnemyCharacter);
+		Enemies.Push(EnemyCharacter);
+	}
+}
+
+void AKillCrowdGameMode::RegisterConsoleCommands()
+{
+	// 콘솔 명령어 등록
+	IConsoleManager::Get().RegisterConsoleCommand(
+		TEXT("SpawnEnemy"),
+		TEXT("Spawn a test enemy"),
+		FConsoleCommandDelegate::CreateUObject(this, &AKillCrowdGameMode::SpawnEnemyCharacter),
+		ECVF_Cheat
+	);
+    
+	// IConsoleManager::Get().RegisterConsoleCommand(
+	// 	TEXT("KillAll"),
+	// 	TEXT("Kill all enemies"),
+	// 	FConsoleCommandDelegate::CreateUObject(this, &AKillCrowdGameMode::KillAllEnemies),
+	// 	ECVF_Cheat
+	// );
+}
+
 
 void AKillCrowdGameMode::SpawnEnemyCharacter()
 {
@@ -67,11 +88,4 @@ void AKillCrowdGameMode::SpawnEnemyCharacter()
 		 	AliveEnemyPool.Add(SpawnedCharacter);
 		}
 	}
-	//ABaseEnemyCharacter* SpawnedCharacter = GetWorld()->SpawnActor<ABaseEnemyCharacter>(EnemyClass, SpawnLocation, FRotator(0,0,0));
-	//
-	// if (SpawnedCharacter)
-	// {
-	// 	Enemies.Add(SpawnedCharacter);
-	// }
-	
 }

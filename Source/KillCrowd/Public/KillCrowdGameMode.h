@@ -25,8 +25,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Enemy")
 	TSet<ABaseEnemyCharacter*> AliveEnemyPool;
 
-	UFUNCTION()
-	void ReturnEnemyPool(ABaseEnemyCharacter* EnemyCharacter);
+
 	
 protected:
 	virtual void BeginPlay() override;
@@ -40,4 +39,9 @@ protected:
 	UFUNCTION()
 	void SpawnEnemyCharacter();
 
+public:
+	UFUNCTION()
+	void ReturnEnemyPool(ABaseEnemyCharacter* EnemyCharacter);
+
+	void RegisterConsoleCommands();
 };

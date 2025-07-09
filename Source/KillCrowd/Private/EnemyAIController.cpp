@@ -49,7 +49,7 @@ void AEnemyAIController::Death()
 void AEnemyAIController::Operation()
 {
 	FTimerHandle TimerHandle;
-
+	
 	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
 	{
 		StartChasing();
@@ -90,5 +90,5 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 	
 	TargetActor = Cast<AActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ABaseCharacter::StaticClass()));
 
-	Operation();
+	//Operation();
 }
