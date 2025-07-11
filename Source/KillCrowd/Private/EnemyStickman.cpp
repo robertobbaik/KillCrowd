@@ -23,7 +23,7 @@ void AEnemyStickman::Attack()
 
 		GetWorldTimerManager().SetTimer(TimerHandle, [this]()
 		{
-			AIController->StartChasing();
+			//AIController->StartChasing();
 		},
 		Duration,
 		false);
@@ -32,21 +32,19 @@ void AEnemyStickman::Attack()
 
 void AEnemyStickman::Death()
 {
-	
 	UE_LOG(LogTemp, Warning, TEXT("StickMan Death"));
-	bIsAlive = false;
-	AIController->Death();
-	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-	{
-		float Duration = DeathAnim->GetPlayLength();
-		
-		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle, [this]()
-		{
-			//Super::Death();
-			SetActive(false);
-		}, Duration + 0.2f, false);
-	}
+	// bIsAlive = false;
+	// AIController->Death();
+	// if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	// {
+	// 	float Duration = DeathAnim->GetPlayLength();
+	// 	
+	// 	FTimerHandle TimerHandle;
+	// 	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
+	// 	{
+	// 		SetActive(false);
+	// 	}, Duration + 0.2f, false);
+	// }
 }
 
 void AEnemyStickman::Operation()

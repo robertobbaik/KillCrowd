@@ -2,14 +2,13 @@
 
 
 #include "EnemyAIController.h"
-
-#include "BaseCharacter.h"
 #include "BaseEnemyCharacter.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Navigation/PathFollowingComponent.h"
-#include "NavigationPath.h"
+
+
+const FName AEnemyAIController::PlayerKey = "Player";
 
 AEnemyAIController::AEnemyAIController()
 {
@@ -52,7 +51,7 @@ void AEnemyAIController::Operation()
 	
 	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
 	{
-		StartChasing();
+		//StartChasing();
 	}, 0.2f, false);
 }
 
@@ -70,13 +69,11 @@ void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 {
 	Super::OnMoveCompleted(RequestID, Result);
 
-	//if (!bIsChasing) return;
-	
 	if (Result.IsSuccess())
 	{
 		if (EnemyCharacter)
 		{
-			EnemyCharacter->Attack();
+			//EnemyCharacter->Attack();
 		}
 	}
 }
@@ -87,8 +84,21 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 	
 	EnemyCharacter = Cast<ABaseEnemyCharacter>(GetPawn());
 	EnemyCharacter->GetCharacterMovement()->MaxWalkSpeed = 200.0f;
-	
-	TargetActor = Cast<AActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ABaseCharacter::StaticClass()));
+
+	if (BehaviorTree)
+	{
+		UBlackboardComponent* BlackboardComponent = BlackboardComp;
+		if (UseBlackboard(BehaviorTree->BlackboardAsset, BlackboardComponent))
+		{
+			RunBehaviorTree(BehaviorTree);
+		}
+	}
+	//TargetActor = Cast<AActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ABaseCharacter::StaticClass()));
 
 	//Operation();
+}
+
+UBlackboardComponent* AEnemyAIController::GetBlackboard() const
+{
+	return Blackboard;
 }

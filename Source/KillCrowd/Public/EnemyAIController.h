@@ -8,9 +8,13 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "EnemyAIController.generated.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum class EEnemyState : uint8
+{
+	Chasing = 0 UMETA(DisplayName = "Chasing"),
+	Attacking = 1 UMETA(DisplayName = "Attacking"),
+	Death = 2 UMETA(DisplayName = "Death")
+};
 UCLASS()
 class KILLCROWD_API AEnemyAIController : public AAIController
 {
@@ -20,8 +24,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Character")
 	ABaseEnemyCharacter* EnemyCharacter;
 	
-	UPROPERTY(EditAnywhere, Category="AI")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI")
 	UBehaviorTree* BehaviorTree;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	UBlackboardComponent* BlackboardComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	AActor* TargetActor;
@@ -48,8 +55,10 @@ protected:
 	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 	virtual void OnPossess(APawn* InPawn) override;
 
-	
+	UFUNCTION()
+	UBlackboardComponent* GetBlackboard() const;
 
 private:
 	bool bIsChasing = false;
+	static const FName PlayerKey;
 };

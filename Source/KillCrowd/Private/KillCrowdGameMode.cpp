@@ -26,7 +26,7 @@ void AKillCrowdGameMode::BeginPlay()
 	
 	FTimerHandle TimerHandle;
 	
-	GetWorldTimerManager().SetTimer(TimerHandle,this, &AKillCrowdGameMode::SpawnEnemyCharacter, 2.f, true);
+	GetWorldTimerManager().SetTimer(TimerHandle,this, &AKillCrowdGameMode::SpawnEnemyCharacter, 2.f, false);
 	RegisterConsoleCommands();
 }
 
