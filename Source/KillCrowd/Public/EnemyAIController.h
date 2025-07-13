@@ -30,12 +30,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	UBlackboardComponent* BlackboardComp;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	AActor* TargetActor;
-
-	UFUNCTION(BlueprintCallable, Category = "AI")
-	void StartChasing();
-
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	void StopChasing();
 
@@ -45,20 +39,17 @@ public:
 	//UFUNCTION(BlueprintCallable, Category = "AI")
 	UFUNCTION()
 	void Death();
-
-	UFUNCTION()
-	void Operation();
 	
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	virtual void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 	virtual void OnPossess(APawn* InPawn) override;
 
-	UFUNCTION()
-	UBlackboardComponent* GetBlackboard() const;
+	// UFUNCTION()
+	// UBlackboardComponent* GetBlackboard() const;
 
 private:
 	bool bIsChasing = false;
 	static const FName PlayerKey;
+	static const FName AliveKey;
 };

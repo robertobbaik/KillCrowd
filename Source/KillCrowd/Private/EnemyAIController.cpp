@@ -2,35 +2,22 @@
 
 
 #include "EnemyAIController.h"
+
+#include "BaseCharacter.h"
 #include "BaseEnemyCharacter.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Navigation/PathFollowingComponent.h"
 
 
 const FName AEnemyAIController::PlayerKey = "Player";
+const FName AEnemyAIController::AliveKey = "Alive";
 
 AEnemyAIController::AEnemyAIController()
 {
 	
-}
-
-void AEnemyAIController::StartChasing()
-{
-	bIsChasing = true;
-
-	if (TargetActor)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("StartChasing"));
-		SetFocus(TargetActor);
-	
-		FAIMoveRequest MoveRequest;
-		MoveRequest.SetGoalActor(TargetActor);
-		MoveRequest.SetAcceptanceRadius(50.f);
-	
-		FNavPathSharedPtr NavPath;
-		FPathFollowingRequestResult Result = MoveTo(MoveRequest);
-	}
 }
 
 void AEnemyAIController::StopChasing()
@@ -41,19 +28,10 @@ void AEnemyAIController::StopChasing()
 
 void AEnemyAIController::Death()
 {
-	StopChasing();
-	ClearFocus(EAIFocusPriority::Gameplay);
+	BlackboardComp->SetValueAsBool(AliveKey, false);
+	
 }
 
-void AEnemyAIController::Operation()
-{
-	FTimerHandle TimerHandle;
-	
-	GetWorldTimerManager().SetTimer(TimerHandle, [this]()
-	{
-		//StartChasing();
-	}, 0.2f, false);
-}
 
 void AEnemyAIController::BeginPlay()
 {
@@ -65,19 +43,6 @@ void AEnemyAIController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
-{
-	Super::OnMoveCompleted(RequestID, Result);
-
-	if (Result.IsSuccess())
-	{
-		if (EnemyCharacter)
-		{
-			//EnemyCharacter->Attack();
-		}
-	}
-}
-
 void AEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
@@ -87,18 +52,22 @@ void AEnemyAIController::OnPossess(APawn* InPawn)
 
 	if (BehaviorTree)
 	{
-		UBlackboardComponent* BlackboardComponent = BlackboardComp;
-		if (UseBlackboard(BehaviorTree->BlackboardAsset, BlackboardComponent))
+		if (UseBlackboard(BehaviorTree->BlackboardAsset, BlackboardComp))
 		{
+			BlackboardComp = GetBlackboardComponent();
+			AActor* TargetActor = Cast<AActor>(UGameplayStatics::GetActorOfClass(this, ABaseCharacter::StaticClass()));
+			if (TargetActor)
+			{
+				BlackboardComp->SetValueAsObject(PlayerKey, TargetActor);
+			}
+			
+			
 			RunBehaviorTree(BehaviorTree);
 		}
 	}
-	//TargetActor = Cast<AActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ABaseCharacter::StaticClass()));
-
-	//Operation();
 }
 
-UBlackboardComponent* AEnemyAIController::GetBlackboard() const
-{
-	return Blackboard;
-}
+// UBlackboardComponent* AEnemyAIController::GetBlackboard() const
+// {
+// 	return Blackboard;
+// }

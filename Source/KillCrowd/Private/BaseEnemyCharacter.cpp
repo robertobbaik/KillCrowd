@@ -56,7 +56,7 @@ void ABaseEnemyCharacter::SetActive(bool bIsActive)
 
 	if (bIsActive)
 	{
-		AIController->Operation();
+		
 	}
 	else
 	{
