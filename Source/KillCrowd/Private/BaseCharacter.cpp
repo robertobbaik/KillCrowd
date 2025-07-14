@@ -52,16 +52,16 @@ void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bIsAttack)
-	{
-		FRotator CurrentRotation = GetMesh()->GetRelativeRotation();
-		
-		FVector Direction = GetClosestEnemy() ? GetActorLocation() - GetClosestEnemy()->GetActorLocation() : GetActorLocation();
-		
-		FRotator TargetRotation = FRotator(0.f,Direction.Rotation().Yaw + 90, 0.f);
-		FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 10.f); // 10.f는 회전 속도
-		GetMesh()->SetRelativeRotation(NewRotation);
-	}
+	// if (bIsAttack)
+	// {
+	// 	FRotator CurrentRotation = GetMesh()->GetRelativeRotation();
+	// 	
+	// 	FVector Direction = GetClosestEnemy() ? GetActorLocation() - GetClosestEnemy()->GetActorLocation() : GetActorLocation();
+	// 	
+	// 	FRotator TargetRotation = FRotator(0.f,Direction.Rotation().Yaw + 90, 0.f);
+	// 	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 10.f); // 10.f는 회전 속도
+	// 	GetMesh()->SetRelativeRotation(NewRotation);
+	// }
 }
 
 // Called to bind functionality to input
@@ -99,13 +99,14 @@ void ABaseCharacter::Move(const FInputActionValue& Value)
 		FRotator CurrentRotation = GetMesh()->GetRelativeRotation();
 		
 		FRotator TargetRotation = FRotator(0.f,Direction.Rotation().Yaw - 90, 0.f);
-
-		if (!bIsAttack)
-		{
-			FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 10.f); // 10.f는 회전 속도
-			GetMesh()->SetRelativeRotation(NewRotation);
-		}
-		
+		FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 10.f); 
+		GetMesh()->SetRelativeRotation(NewRotation);
+		// if (!bIsAttack)
+		// {
+		// 	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 10.f); 
+		// 	GetMesh()->SetRelativeRotation(NewRotation);
+		// }
+		//UE_LOG(LogTemp, Warning, TEXT("%s"), *GetMesh()->GetForwardVector().ToString());
 		AddMovementInput(Direction, Length);
 	}
 }

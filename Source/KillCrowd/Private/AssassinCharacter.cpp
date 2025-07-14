@@ -12,18 +12,21 @@ AAssassinCharacter::AAssassinCharacter()
 }
 
 void AAssassinCharacter::SetDamage()
-{	float MinDistance = 300.0f;
-
+{
+	float MinDistance = 300.0f;
+	float MaxAngle = 90.0f;
 	if (AKillCrowdGameMode* GameMode = AKillCrowdGameMode::GetInstance())
 	{
 		TSet<ABaseEnemyCharacter*> Enemies = GameMode->AliveEnemyPool;
-	
+
 		for (ABaseEnemyCharacter* Enemy : Enemies)
 		{
 			float Distance = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
+			
 			if (Distance < MinDistance && Enemy->bIsAlive)
 			{
-				UGameplayStatics::ApplyDamage(Enemy, 50.0f, GetController(), this,	UDamageType::StaticClass());	
+				UE_LOG(LogTemp, Warning, TEXT("Enemy Hit"));
+				//UGameplayStatics::ApplyDamage(Enemy, 50.0f, GetController(), this,	UDamageType::StaticClass());	
 			}
 		}
 	}
@@ -39,12 +42,14 @@ void AAssassinCharacter::Attack()
 		if (FVector::Distance(GetActorLocation(), NearestEnemy->GetActorLocation()) < MinDistance)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Attack"));
-
+	
 			if (MapAttackMontage[CurrentWeaponType])
 			{
 				PlayAnimMontage(MapAttackMontage[CurrentWeaponType], 3.0f);
 				float Duration = MapAttackMontage[CurrentWeaponType]->GetPlayLength();
 
+				//UE_LOG(LogTemp, Warning, TEXT("%s"), *GetMesh()->GetForwardVector().ToString());
+				//UE_LOG(LogTemp, Warning, TEXT("%s"), *GetActorForwardVector().ToString());
 				bIsAttack = true;
 				FTimerHandle TimerHandle;
 				GetWorldTimerManager().SetTimer(TimerHandle, [this]()
