@@ -14,16 +14,20 @@ AAssassinCharacter::AAssassinCharacter()
 void AAssassinCharacter::SetDamage()
 {	float MinDistance = 300.0f;
 
-	TSet<ABaseEnemyCharacter*> Enemies = GameMode->AliveEnemyPool;
-	
-	for (ABaseEnemyCharacter* Enemy : Enemies)
+	if (AKillCrowdGameMode* GameMode = AKillCrowdGameMode::GetInstance())
 	{
-		float Distance = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
-		if (Distance < MinDistance && Enemy->bIsAlive)
+		TSet<ABaseEnemyCharacter*> Enemies = GameMode->AliveEnemyPool;
+	
+		for (ABaseEnemyCharacter* Enemy : Enemies)
 		{
-			UGameplayStatics::ApplyDamage(Enemy, 50.0f, GetController(), this,	UDamageType::StaticClass());	
+			float Distance = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
+			if (Distance < MinDistance && Enemy->bIsAlive)
+			{
+				UGameplayStatics::ApplyDamage(Enemy, 50.0f, GetController(), this,	UDamageType::StaticClass());	
+			}
 		}
 	}
+
 }
 
 void AAssassinCharacter::Attack()
@@ -38,7 +42,7 @@ void AAssassinCharacter::Attack()
 
 			if (MapAttackMontage[CurrentWeaponType])
 			{
-				PlayAnimMontage(MapAttackMontage[CurrentWeaponType]);
+				PlayAnimMontage(MapAttackMontage[CurrentWeaponType], 3.0f);
 				float Duration = MapAttackMontage[CurrentWeaponType]->GetPlayLength();
 
 				bIsAttack = true;

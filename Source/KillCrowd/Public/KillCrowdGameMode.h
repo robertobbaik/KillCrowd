@@ -6,6 +6,7 @@
 #include "BaseCharacter.h"
 #include "BaseEnemyCharacter.h"
 #include "GameFramework/GameMode.h"
+
 #include "KillCrowdGameMode.generated.h"
 
 /**
@@ -25,11 +26,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Enemy")
 	TSet<ABaseEnemyCharacter*> AliveEnemyPool;
 
-
+	
+	UFUNCTION(BlueprintCallable, Category="Singleton")
+	static AKillCrowdGameMode* GetInstance();
 	
 protected:
 	virtual void BeginPlay() override;
-
+	
+	static AKillCrowdGameMode* Instance;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Enemy")
 	TSubclassOf<ABaseEnemyCharacter> EnemyClass;
 
@@ -40,6 +45,9 @@ protected:
 	void SpawnEnemyCharacter();
 
 public:
+	UFUNCTION()
+	void RemoveAlivePool(ABaseEnemyCharacter* EnemyCharacter);
+
 	UFUNCTION()
 	void ReturnEnemyPool(ABaseEnemyCharacter* EnemyCharacter);
 

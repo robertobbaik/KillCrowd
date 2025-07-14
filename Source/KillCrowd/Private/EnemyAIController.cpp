@@ -13,23 +13,36 @@
 
 
 const FName AEnemyAIController::PlayerKey = "Player";
-const FName AEnemyAIController::AliveKey = "Alive";
+const FName AEnemyAIController::AliveKey = "IsAlive";
 
 AEnemyAIController::AEnemyAIController()
 {
-	
 }
 
-void AEnemyAIController::StopChasing()
+void AEnemyAIController::ResetAIState()
 {
-	bIsChasing = false;
-	StopMovement();
+	if (BehaviorTree)
+	{
+		if (UseBlackboard(BehaviorTree->BlackboardAsset, BlackboardComp))
+		{
+			BlackboardComp = GetBlackboardComponent();
+			AActor* TargetActor = Cast<AActor>(UGameplayStatics::GetActorOfClass(this, ABaseCharacter::StaticClass()));
+			if (TargetActor)
+			{
+				BlackboardComp->SetValueAsObject(PlayerKey, TargetActor);
+				BlackboardComp->SetValueAsBool(TEXT("IsAlive"), true);
+				SetFocus(TargetActor);
+			}
+			
+			RunBehaviorTree(BehaviorTree);
+		}
+	}
 }
 
 void AEnemyAIController::Death()
 {
+	ClearFocus(EAIFocusPriority::Gameplay);
 	BlackboardComp->SetValueAsBool(AliveKey, false);
-	
 }
 
 
@@ -42,32 +55,3 @@ void AEnemyAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-void AEnemyAIController::OnPossess(APawn* InPawn)
-{
-	Super::OnPossess(InPawn);
-	
-	EnemyCharacter = Cast<ABaseEnemyCharacter>(GetPawn());
-	EnemyCharacter->GetCharacterMovement()->MaxWalkSpeed = 200.0f;
-
-	if (BehaviorTree)
-	{
-		if (UseBlackboard(BehaviorTree->BlackboardAsset, BlackboardComp))
-		{
-			BlackboardComp = GetBlackboardComponent();
-			AActor* TargetActor = Cast<AActor>(UGameplayStatics::GetActorOfClass(this, ABaseCharacter::StaticClass()));
-			if (TargetActor)
-			{
-				BlackboardComp->SetValueAsObject(PlayerKey, TargetActor);
-			}
-			
-			
-			RunBehaviorTree(BehaviorTree);
-		}
-	}
-}
-
-// UBlackboardComponent* AEnemyAIController::GetBlackboard() const
-// {
-// 	return Blackboard;
-// }

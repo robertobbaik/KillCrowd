@@ -3,20 +3,27 @@
 
 #include "KillCrowdGameMode.h"
 #include "CharacterController.h"
-#include "EntitySystem/MovieSceneEntitySystemRunner.h"
 #include "Kismet/GameplayStatics.h"
 
+AKillCrowdGameMode* AKillCrowdGameMode::Instance = nullptr;
 
 AKillCrowdGameMode::AKillCrowdGameMode()
 {
 	PlayerControllerClass = ACharacterController::StaticClass();
+	RegisterConsoleCommands();
+	Instance = this;
 }
 
+
+AKillCrowdGameMode* AKillCrowdGameMode::GetInstance()
+{
+	return Instance;
+}
 
 void AKillCrowdGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
+	Instance = this;
 	if (ACharacterController* Controller = Cast<ACharacterController>(UGameplayStatics::GetPlayerController(this, 0)))
 	{
 		Controller->CreateCharacter();
@@ -26,37 +33,35 @@ void AKillCrowdGameMode::BeginPlay()
 	
 	FTimerHandle TimerHandle;
 	
-	GetWorldTimerManager().SetTimer(TimerHandle,this, &AKillCrowdGameMode::SpawnEnemyCharacter, 2.f, false);
-	RegisterConsoleCommands();
+	GetWorldTimerManager().SetTimer(TimerHandle,this, &AKillCrowdGameMode::SpawnEnemyCharacter, 2.f, true);
+
+}
+
+void AKillCrowdGameMode::RemoveAlivePool(ABaseEnemyCharacter* EnemyCharacter)
+{
+	if (EnemyCharacter)
+	{
+		AliveEnemyPool.Remove(EnemyCharacter);
+	}
 }
 
 void AKillCrowdGameMode::ReturnEnemyPool(ABaseEnemyCharacter* EnemyCharacter)
 {
 	if (EnemyCharacter)
 	{
-		AliveEnemyPool.Remove(EnemyCharacter);
 		Enemies.Push(EnemyCharacter);
 	}
 }
 
 void AKillCrowdGameMode::RegisterConsoleCommands()
 {
-	// 콘솔 명령어 등록
 	IConsoleManager::Get().RegisterConsoleCommand(
 		TEXT("SpawnEnemy"),
 		TEXT("Spawn a test enemy"),
 		FConsoleCommandDelegate::CreateUObject(this, &AKillCrowdGameMode::SpawnEnemyCharacter),
 		ECVF_Cheat
 	);
-    
-	// IConsoleManager::Get().RegisterConsoleCommand(
-	// 	TEXT("KillAll"),
-	// 	TEXT("Kill all enemies"),
-	// 	FConsoleCommandDelegate::CreateUObject(this, &AKillCrowdGameMode::KillAllEnemies),
-	// 	ECVF_Cheat
-	// );
 }
-
 
 void AKillCrowdGameMode::SpawnEnemyCharacter()
 {
@@ -71,6 +76,7 @@ void AKillCrowdGameMode::SpawnEnemyCharacter()
 
 	UE_LOG(LogTemp, Warning, TEXT("Enemie : %d "), Enemies.Num());
 	UE_LOG(LogTemp, Warning, TEXT("Alive : %d "), AliveEnemyPool.Num());
+
 	if (Enemies.Num() > 0)
 	{
 		if (ABaseEnemyCharacter* SpawnedCharacter = Enemies.Pop())

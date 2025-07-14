@@ -29,12 +29,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	UBlackboardComponent* BlackboardComp;
-
-	UFUNCTION(BlueprintCallable, Category = "AI")
-	void StopChasing();
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float ChaseRadius = 1000.0f;
+
+	UFUNCTION()
+	void ResetAIState();
 
 	//UFUNCTION(BlueprintCallable, Category = "AI")
 	UFUNCTION()
@@ -43,7 +43,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	virtual void OnPossess(APawn* InPawn) override;
+	//virtual void OnPossess(APawn* InPawn) override;
 
 	// UFUNCTION()
 	// UBlackboardComponent* GetBlackboard() const;

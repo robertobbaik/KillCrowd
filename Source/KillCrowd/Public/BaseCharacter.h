@@ -36,9 +36,6 @@ protected:
 	UPROPERTY()
 	bool bIsAttack;
 
-	UPROPERTY()
-	AKillCrowdGameMode* GameMode;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess))
 	EWeaponType CurrentWeaponType;
 

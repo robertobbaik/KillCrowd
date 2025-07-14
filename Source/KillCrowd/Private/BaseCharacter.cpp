@@ -40,12 +40,11 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	GameMode = Cast<AKillCrowdGameMode>(GetWorld()->GetAuthGameMode());
+	
 	ChangeWeapon(EWeaponType::Basic);
 
 	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABaseCharacter::Attack, 2.f, true);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABaseCharacter::Attack, 1.f, true);
 
 }
 // Called every frame
@@ -113,22 +112,26 @@ void ABaseCharacter::Move(const FInputActionValue& Value)
 
 ABaseEnemyCharacter* ABaseCharacter::GetClosestEnemy()
 {
-	float MinDistance = MAX_FLT;
-
-	TSet<ABaseEnemyCharacter*> Enemies = GameMode->AliveEnemyPool;
-	ABaseEnemyCharacter* NearestEnemy = nullptr;
-	
-	for (ABaseEnemyCharacter* Enemy : Enemies)
+	if (AKillCrowdGameMode* GameMode = AKillCrowdGameMode::GetInstance())
 	{
-		float Distance = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
-		if (Distance < MinDistance)
+		float MinDistance = MAX_FLT;
+		TSet<ABaseEnemyCharacter*> Enemies = GameMode->AliveEnemyPool;
+		ABaseEnemyCharacter* NearestEnemy = nullptr;
+	
+		for (ABaseEnemyCharacter* Enemy : Enemies)
 		{
-			MinDistance = Distance;
-			NearestEnemy = Enemy;
+			float Distance = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
+			if (Distance < MinDistance)
+			{
+				MinDistance = Distance;
+				NearestEnemy = Enemy;
+			}
 		}
-	}
 
-	return NearestEnemy;
+		return NearestEnemy;
+	}
+	
+	return nullptr;
 }
 
 
