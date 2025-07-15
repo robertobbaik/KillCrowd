@@ -5,6 +5,8 @@
 
 #include "KillCrowdGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Math/UnitConversion.h"
 
 AAssassinCharacter::AAssassinCharacter()
 {
@@ -14,23 +16,46 @@ AAssassinCharacter::AAssassinCharacter()
 void AAssassinCharacter::SetDamage()
 {
 	float MinDistance = 300.0f;
-	float MaxAngle = 90.0f;
+	
 	if (AKillCrowdGameMode* GameMode = AKillCrowdGameMode::GetInstance())
 	{
 		TSet<ABaseEnemyCharacter*> Enemies = GameMode->AliveEnemyPool;
 
+		// 메쉬의 2D 평면에서의 전방 벡터 (Z축 제거)
+		FVector CharacterForward = GetMesh()->GetForwardVector();
+		CharacterForward.Z = 0.0f;
+		CharacterForward.Normalize();
+        
+		FVector CharacterLocation = GetActorLocation();
+
 		for (ABaseEnemyCharacter* Enemy : Enemies)
 		{
-			float Distance = FVector::Distance(GetActorLocation(), Enemy->GetActorLocation());
-			
-			if (Distance < MinDistance && Enemy->bIsAlive)
+			if (!Enemy || !Enemy->bIsAlive)
+				continue;
+
+			FVector EnemyLocation = Enemy->GetActorLocation();
+			float Distance = FVector::Distance(CharacterLocation, EnemyLocation);
+            
+			if (Distance < MinDistance)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Enemy Hit"));
-				//UGameplayStatics::ApplyDamage(Enemy, 50.0f, GetController(), this,	UDamageType::StaticClass());	
+				FVector DirectionToEnemy = EnemyLocation - CharacterLocation;
+				DirectionToEnemy.Z = 0.0f; 
+				DirectionToEnemy.Normalize();
+				
+				FVector CrossProduct = FVector::CrossProduct(CharacterForward, DirectionToEnemy);
+				float DotProduct = FVector::DotProduct(CharacterForward, DirectionToEnemy);
+				
+				float AngleInRadians = FMath::Atan2(CrossProduct.Z, DotProduct);
+				float AngleInDegrees = FMath::RadiansToDegrees(AngleInRadians);
+				
+				if (AngleInDegrees >= 0)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Enemy Hit! Distance: %.2f, Angle: %.2f"), Distance, AngleInDegrees);
+					UGameplayStatics::ApplyDamage(Enemy, 50.0f, GetController(), this, UDamageType::StaticClass());
+				}
 			}
 		}
 	}
-
 }
 
 void AAssassinCharacter::Attack()

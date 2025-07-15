@@ -74,6 +74,7 @@ void ABaseEnemyCharacter::SetActive(bool bIsActive)
 	}
 }
 
+
 void ABaseEnemyCharacter::Death()
 {
 	UE_LOG(LogTemp, Warning, TEXT("BaseEnemy Death"));
@@ -89,12 +90,11 @@ void ABaseEnemyCharacter::Death()
 		{
 			PlayAnimMontage(DeathAnim);
 			float Duration = DeathAnim->GetPlayLength();
-			TWeakObjectPtr<ABaseEnemyCharacter> WeakThis(this);
+		
 			FTimerHandle TimerHandle;
-			GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]()
+			GetWorldTimerManager().SetTimer(TimerHandle, [this]()
 			{
-				WeakThis->SetActive(false);
-			
+				SetActive(false);
 			}, Duration + 0.2f, false);
 		}
 	}
@@ -112,3 +112,4 @@ float ABaseEnemyCharacter::TakeDamage(float DamageAmount, struct FDamageEvent co
 	bIsAlive = false;
 	return ActualDamage;
 }
+

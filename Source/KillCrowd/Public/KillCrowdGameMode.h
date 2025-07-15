@@ -52,4 +52,15 @@ public:
 	void ReturnEnemyPool(ABaseEnemyCharacter* EnemyCharacter);
 
 	void RegisterConsoleCommands();
+	
+	UFUNCTION(BlueprintCallable, Category = "Enemy Data")
+	bool LoadEnemyDataFromCSV();
+
+	// 읽은 데이터 저장할 맵
+	UPROPERTY(BlueprintReadOnly, Category = "Enemy Data")
+	TMap<FString, FEnemyStats> EnemyDataMap;
+
+private:
+	// CSV 라인을 파싱하는 헬퍼 함수
+	FEnemyStats ParseCSVLine(const FString& CSVLine);
 };
