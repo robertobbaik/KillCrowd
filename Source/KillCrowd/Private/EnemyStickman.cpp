@@ -5,11 +5,6 @@
 
 #include "EnemyAIController.h"
 
-void AEnemyStickman::Initialize(const FEnemyStats& EnemyStats)
-{
-	
-}
-
 void AEnemyStickman::Attack()
 {
 	if (!bIsAlive) return;
@@ -24,8 +19,6 @@ void AEnemyStickman::Death()
 {
 	Super::Death();
 	UE_LOG(LogTemp, Warning, TEXT("StickMan Death"));
-
-
 }
 
 void AEnemyStickman::Operation()

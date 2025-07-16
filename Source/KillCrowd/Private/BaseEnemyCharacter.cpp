@@ -18,7 +18,6 @@ ABaseEnemyCharacter::ABaseEnemyCharacter()
 
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 }
 
 void ABaseEnemyCharacter::BeginPlay()
@@ -29,7 +28,7 @@ void ABaseEnemyCharacter::BeginPlay()
 
 	UMaterialInterface* CurrentMaterial = GetMesh()->GetMaterial(0);
 	MaterialInstance = UMaterialInstanceDynamic::Create(CurrentMaterial, this);
-
+	
 	GetMesh()->SetMaterial(0, MaterialInstance);
 	GetCapsuleComponent()->SetCollisionObjectType(ECC_GameTraceChannel2);
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Block);
@@ -75,6 +74,21 @@ void ABaseEnemyCharacter::SetActive(bool bIsActive)
 }
 
 
+void ABaseEnemyCharacter::Initialize(const FEnemyStats& EnemyStats)
+{
+	MaterialInstance->SetScalarParameterValue(TEXT("Disolve"), -1.f);
+	
+	MaxHealth = EnemyStats.MaxHealth;
+	AttackDamage = EnemyStats.AttackDamage;
+	MovementSpeed = EnemyStats.MovementSpeed;
+	AttackRange = EnemyStats.AttackRange;
+	AttackCoolDown = EnemyStats.AttackCoolDown;
+	ExperienceValue = EnemyStats.ExperienceValue;
+
+	GetCharacterMovement()->MaxWalkSpeed = MovementSpeed;
+	AIController->Initialize(EnemyStats);
+}
+
 void ABaseEnemyCharacter::Death()
 {
 	UE_LOG(LogTemp, Warning, TEXT("BaseEnemy Death"));
@@ -89,6 +103,8 @@ void ABaseEnemyCharacter::Death()
 		if (DeathAnim)
 		{
 			PlayAnimMontage(DeathAnim);
+			UE_LOG(LogTemp, Warning, TEXT("Death"));
+			OnEnemyDeath();
 			float Duration = DeathAnim->GetPlayLength();
 		
 			FTimerHandle TimerHandle;
@@ -107,9 +123,15 @@ float ABaseEnemyCharacter::TakeDamage(float DamageAmount, struct FDamageEvent co
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, this);
 
 	UE_LOG(LogTemp, Warning, TEXT("Set Damage"));
+	UE_LOG(LogTemp, Warning, TEXT("MAX Health : %f"), MaxHealth);
+	MaxHealth -= ActualDamage;
+	UE_LOG(LogTemp, Warning, TEXT("MAX Health : %f"), MaxHealth);
+	if (MaxHealth <= 0.0f)
+	{
+		AIController->Death();
+		bIsAlive = false;
+	}
 	
-	AIController->Death();
-	bIsAlive = false;
 	return ActualDamage;
 }
 

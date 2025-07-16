@@ -33,8 +33,8 @@ void AKillCrowdGameMode::BeginPlay()
 	
 	FTimerHandle TimerHandle;
 	
-	GetWorldTimerManager().SetTimer(TimerHandle,this, &AKillCrowdGameMode::SpawnEnemyCharacter, 2.f, false);
-
+	GetWorldTimerManager().SetTimer(TimerHandle,this, &AKillCrowdGameMode::SpawnEnemyCharacter, 2.f, true);
+	LoadEnemyDataFromCSV();
 }
 
 void AKillCrowdGameMode::RemoveAlivePool(ABaseEnemyCharacter* EnemyCharacter)
@@ -65,7 +65,7 @@ void AKillCrowdGameMode::RegisterConsoleCommands()
 
 bool AKillCrowdGameMode::LoadEnemyDataFromCSV()
 {
-	FString FilePath = FPaths::ProjectContentDir() + TEXT("Data/EnemyStats.csv");
+	FString FilePath = FPaths::ProjectContentDir() + TEXT("Data/EnemyData.csv");
     
 	UE_LOG(LogTemp, Log, TEXT("Loading CSV file: %s"), *FilePath);
     
@@ -169,6 +169,7 @@ void AKillCrowdGameMode::SpawnEnemyCharacter()
 		{
 			SpawnedCharacter->SetActorLocation(SpawnLocation);
 			SpawnedCharacter->SetActive(true);
+			SpawnedCharacter->Initialize(EnemyDataMap["BasicEnemy"]);
 			AliveEnemyPool.Add(SpawnedCharacter);
 		}
 	}
@@ -177,6 +178,7 @@ void AKillCrowdGameMode::SpawnEnemyCharacter()
 		if (ABaseEnemyCharacter* SpawnedCharacter = GetWorld()->SpawnActor<ABaseEnemyCharacter>(EnemyClass, SpawnLocation, FRotator(0,0,0)))
 		{
 			SpawnedCharacter->SetActive(true);
+			SpawnedCharacter->Initialize(EnemyDataMap["BasicEnemy"]);
 		 	AliveEnemyPool.Add(SpawnedCharacter);
 		}
 	}

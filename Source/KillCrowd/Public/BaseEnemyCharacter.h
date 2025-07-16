@@ -63,6 +63,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Status")
 	bool bIsAlive;
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Events")
+	void OnEnemyDeath();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -96,7 +99,10 @@ protected:
 
 
 public:
-	virtual void Initialize(const FEnemyStats& EnemyStats) PURE_VIRTUAL(ABaseEnemyCharacter::Initialize, );
+
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	void Initialize(const FEnemyStats& EnemyStats);
+	
 	virtual void Attack() PURE_VIRTUAL(ABaseEnemyCharacter::Attack, );
 	virtual void Death();
 	virtual void Operation() PURE_VIRTUAL(ABaseEnemyCharacter::Operation, );

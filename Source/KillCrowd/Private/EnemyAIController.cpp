@@ -19,6 +19,12 @@ AEnemyAIController::AEnemyAIController()
 {
 }
 
+void AEnemyAIController::Initialize(const FEnemyStats& EnemyStats)
+{
+	BlackboardComp->SetValueAsFloat(TEXT("AttackCoolDown"), EnemyStats.AttackCoolDown);
+	BlackboardComp->SetValueAsFloat(TEXT("AttackRange"), EnemyStats.AttackRange);
+}
+
 void AEnemyAIController::ResetAIState()
 {
 	if (BehaviorTree)
@@ -44,7 +50,6 @@ void AEnemyAIController::Death()
 	ClearFocus(EAIFocusPriority::Gameplay);
 	BlackboardComp->SetValueAsBool(AliveKey, false);
 }
-
 
 void AEnemyAIController::BeginPlay()
 {

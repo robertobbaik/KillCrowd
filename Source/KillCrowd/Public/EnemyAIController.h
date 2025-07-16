@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float ChaseRadius = 1000.0f;
 
+	UFUNCTION(BlueprintCallable, Category = "Status")
+	void Initialize(const FEnemyStats& EnemyStats);
+	
 	UFUNCTION()
 	void ResetAIState();
 
