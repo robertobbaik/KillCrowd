@@ -5,6 +5,7 @@
 
 #include "EnemyAIController.h"
 #include "KillCrowdGameMode.h"
+#include "ShaderCompiler.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -76,6 +77,10 @@ void ABaseEnemyCharacter::SetActive(bool bIsActive)
 
 void ABaseEnemyCharacter::Initialize(const FEnemyStats& EnemyStats)
 {
+	float Temp = 0.f;
+	MaterialInstance->GetScalarParameterDefaultValue(TEXT("Disolve"), Temp);
+	UE_LOG(LogTemp, Warning, TEXT("Temp : %f"), Temp);
+	
 	MaterialInstance->SetScalarParameterValue(TEXT("Disolve"), -1.f);
 	
 	MaxHealth = EnemyStats.MaxHealth;

@@ -151,14 +151,23 @@ FEnemyStats AKillCrowdGameMode::ParseCSVLine(const FString& CSVLine)
 
 void AKillCrowdGameMode::SpawnEnemyCharacter()
 {
+	const float WorldMinX = -4000.0f;
+	const float WorldMaxX = 4000.0f;
+	const float WorldMinY = -4000.0f;
+	const float WorldMaxY = 4000.0f;
+	
 	float RandomAngle = FMath::RandRange(0.0f, 360.0f);
-	float RandomDistance = FMath::RandRange(800.0f, 1000.0f);
+	float RandomDistance = FMath::RandRange(2000.f, 4000.0f);
     
 	FVector PlayerLocation = PlayerCharacter->GetActorLocation();
 	float X = RandomDistance * FMath::Cos(FMath::DegreesToRadians(RandomAngle));
 	float Y = RandomDistance * FMath::Sin(FMath::DegreesToRadians(RandomAngle));
     
 	FVector SpawnLocation = PlayerLocation + FVector(X, Y, 0.0f);
+    
+	// 월드 범위 내로 제한
+	SpawnLocation.X = FMath::Clamp(SpawnLocation.X, WorldMinX, WorldMaxX);
+	SpawnLocation.Y = FMath::Clamp(SpawnLocation.Y, WorldMinY, WorldMaxY);
 
 	UE_LOG(LogTemp, Warning, TEXT("Enemie : %d "), Enemies.Num());
 	UE_LOG(LogTemp, Warning, TEXT("Alive : %d "), AliveEnemyPool.Num());

@@ -6,6 +6,7 @@
 #include "BaseCharacter.h"
 #include "EngineUtils.h"
 #include "EnhancedInputSubsystems.h"
+#include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerStart.h"
 
 ACharacterController::ACharacterController() : InputMappingContext(nullptr), MoveAction(nullptr)
@@ -43,6 +44,15 @@ void ACharacterController::BeginPlay()
 			{
 				SubSystem->AddMappingContext(InputMappingContext, 0);
 			}
+		}
+	}
+
+	if (HUDWidgetClass)
+	{
+		UUserWidget* HUDWidget = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+		if (HUDWidget)
+		{
+			HUDWidget->AddToViewport();
 		}
 	}
 
