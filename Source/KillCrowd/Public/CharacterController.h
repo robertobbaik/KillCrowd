@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TextBlock.h"
 #include "GameFramework/PlayerController.h"
 #include "CharacterController.generated.h"
 
@@ -27,7 +28,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> HUDWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UUserWidget* HUDWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UTextBlock* TimerText;
 	
+	UFUNCTION()
 	void CreateCharacter();
 protected:
 	virtual void BeginPlay() override;

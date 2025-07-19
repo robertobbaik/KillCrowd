@@ -69,8 +69,20 @@ public:
 	
 
 private:
+	
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
 	float AttackSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
 	float MoveSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
 	float AttackRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
 	float AttackAngle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float AttackDamage;
 };	

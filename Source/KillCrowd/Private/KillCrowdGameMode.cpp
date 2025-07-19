@@ -3,6 +3,7 @@
 
 #include "KillCrowdGameMode.h"
 #include "CharacterController.h"
+#include "KillCrowdGameState.h"
 #include "Kismet/GameplayStatics.h"
 
 AKillCrowdGameMode* AKillCrowdGameMode::Instance = nullptr;
@@ -28,6 +29,13 @@ void AKillCrowdGameMode::BeginPlay()
 	{
 		Controller->CreateCharacter();
 	}
+	
+	if (AKillCrowdGameState* KillCrowdGameState = Cast<AKillCrowdGameState>(GetWorld()->GetGameState()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cast"))
+		KillCrowdGameState->StartGame();
+	}
+	
 
 	PlayerCharacter = Cast<ABaseCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ABaseCharacter::StaticClass()));
 	

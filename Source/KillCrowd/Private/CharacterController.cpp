@@ -9,8 +9,11 @@
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerStart.h"
 
+
+
 ACharacterController::ACharacterController() : InputMappingContext(nullptr), MoveAction(nullptr)
 {
+	
 }
 
 void ACharacterController::CreateCharacter()
@@ -49,10 +52,11 @@ void ACharacterController::BeginPlay()
 
 	if (HUDWidgetClass)
 	{
-		UUserWidget* HUDWidget = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+		HUDWidget = CreateWidget<UUserWidget>(this, HUDWidgetClass);
 		if (HUDWidget)
 		{
 			HUDWidget->AddToViewport();
+			TimerText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("RemainTime")));
 		}
 	}
 

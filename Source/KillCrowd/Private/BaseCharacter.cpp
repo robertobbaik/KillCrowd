@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "KillCrowdGameMode.h"
 #include "BaseEnemyCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -29,11 +30,11 @@ ABaseCharacter::ABaseCharacter()
 
 	WeaponMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
 
-	GetCapsuleComponent()->SetCollisionObjectType(ECC_GameTraceChannel1); // 15번
+	GetCapsuleComponent()->SetCollisionObjectType(ECC_GameTraceChannel1);
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Block);
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Overlap); // Player(14번)와 Overlap
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Ignore);  // Enemy(15번)끼리 Ignore
-	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); // 벽은 Block
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel2, ECR_Overlap);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Ignore);  
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); 
 }
 
 // Called when the game starts or when spawned
@@ -46,6 +47,16 @@ void ABaseCharacter::BeginPlay()
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABaseCharacter::Attack, 1.f, true);
 
+	AttackSpeed = 1.f;
+	MoveSpeed = 200.f;
+	AttackRadius = 200.f;
+	AttackAngle = 180.f;
+	AttackDamage = 100.f;
+
+	if (UCharacterMovementComponent* MovementComp = GetCharacterMovement())
+	{
+		MovementComp->MaxWalkSpeed = MoveSpeed;
+	}
 }
 // Called every frame
 void ABaseCharacter::Tick(float DeltaTime)
@@ -115,7 +126,7 @@ ABaseEnemyCharacter* ABaseCharacter::GetClosestEnemy()
 {
 	if (AKillCrowdGameMode* GameMode = AKillCrowdGameMode::GetInstance())
 	{
-		float MinDistance = MAX_FLT;
+		float MinDistance = AttackRadius;
 		TSet<ABaseEnemyCharacter*> Enemies = GameMode->AliveEnemyPool;
 		ABaseEnemyCharacter* NearestEnemy = nullptr;
 	
