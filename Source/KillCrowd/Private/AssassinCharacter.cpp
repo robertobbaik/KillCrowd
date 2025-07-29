@@ -15,13 +15,12 @@ AAssassinCharacter::AAssassinCharacter()
 
 void AAssassinCharacter::SetDamage()
 {
-	float MinDistance = 300.0f;
+	float MinDistance = AttackRadius;
 	
 	if (AKillCrowdGameMode* GameMode = AKillCrowdGameMode::GetInstance())
 	{
 		TSet<ABaseEnemyCharacter*> Enemies = GameMode->AliveEnemyPool;
-
-		// 메쉬의 2D 평면에서의 전방 벡터 (Z축 제거)
+		
 		FVector CharacterForward = GetMesh()->GetForwardVector();
 		CharacterForward.Z = 0.0f;
 		CharacterForward.Normalize();
@@ -51,7 +50,7 @@ void AAssassinCharacter::SetDamage()
 				if (AngleInDegrees >= 0)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Enemy Hit! Distance: %.2f, Angle: %.2f"), Distance, AngleInDegrees);
-					UGameplayStatics::ApplyDamage(Enemy, 50.0f, GetController(), this, UDamageType::StaticClass());
+					UGameplayStatics::ApplyDamage(Enemy, AttackDamage, GetController(), this, UDamageType::StaticClass());
 				}
 			}
 		}

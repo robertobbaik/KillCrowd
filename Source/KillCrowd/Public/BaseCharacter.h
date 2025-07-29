@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
 #include "BaseCharacter.generated.h"
 
@@ -50,6 +51,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TMap<EWeaponType, UAnimMontage*> MapAttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UWidgetComponent* HealthBar;
 	
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);

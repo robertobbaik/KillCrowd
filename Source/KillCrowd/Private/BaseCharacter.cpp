@@ -28,6 +28,9 @@ ABaseCharacter::ABaseCharacter()
 	CameraComp->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	CameraComp->bUsePawnControlRotation = false;
 
+	HealthBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HealthBar"));
+	HealthBar->SetupAttachment(RootComponent);
+	
 	WeaponMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
 
 	GetCapsuleComponent()->SetCollisionObjectType(ECC_GameTraceChannel1);
@@ -48,7 +51,7 @@ void ABaseCharacter::BeginPlay()
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ABaseCharacter::Attack, 1.f, true);
 
 	AttackSpeed = 1.f;
-	MoveSpeed = 200.f;
+	MoveSpeed = 500.f;
 	AttackRadius = 200.f;
 	AttackAngle = 180.f;
 	AttackDamage = 100.f;
@@ -112,12 +115,7 @@ void ABaseCharacter::Move(const FInputActionValue& Value)
 		FRotator TargetRotation = FRotator(0.f,Direction.Rotation().Yaw - 90, 0.f);
 		FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 10.f); 
 		GetMesh()->SetRelativeRotation(NewRotation);
-		// if (!bIsAttack)
-		// {
-		// 	FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 10.f); 
-		// 	GetMesh()->SetRelativeRotation(NewRotation);
-		// }
-		//UE_LOG(LogTemp, Warning, TEXT("%s"), *GetMesh()->GetForwardVector().ToString());
+
 		AddMovementInput(Direction, Length);
 	}
 }
